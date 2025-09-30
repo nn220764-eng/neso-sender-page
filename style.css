@@ -81,6 +81,18 @@ button, select {
   align-items: center;
   margin-bottom: 20px;
 }
+.distribute-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.distribute-form > .input-field {
+  width: 100%;
+}
+.section-divider {
+  margin-top: 24px;
+}
 
 .input-field {
   padding: 10px;
@@ -88,6 +100,11 @@ button, select {
   border-radius: 6px;
   font-size: 14px;
   height: 40px;
+}
+
+/* 複数選択リストのスタイル */
+#multiAddressSelect {
+  height: auto;
 }
 
 .amount-input { width: 100px; }
@@ -123,6 +140,7 @@ pre {
   overflow-y: auto; /* ログが多くなったらスクロール */
 }
 
-#addressBookSection {
+#singleAddSection,
+#multiAddSection {
   display: none; /* デフォルトで非表示 */
 }

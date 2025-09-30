@@ -13,15 +13,25 @@
     <div id="status" class="status-box">未接続</div>
     <div class="button-group">
       <button id="connectBtn">MetaMask 接続</button>
-      <button id="toggleAddressBookBtn" class="toggle-button">アドレス帳を開く</button>
+      <button id="toggleSingleAddBtn" class="toggle-button">単一宛先を追加</button>
+      <button id="toggleMultiAddBtn" class="toggle-button">複数宛先に分配</button>
     </div>
 
-    <div id="addressBookSection">
-      <h3>宛先を選択してリストに追加</h3>
+    <div id="singleAddSection">
+      <h3>単一の宛先を追加</h3>
       <div class="add-form">
-        <select id="addressBookSelect" class="input-field"><option value="">宛先を選択...</option></select>
+        <select id="singleAddressSelect" class="input-field"><option value="">宛先を選択...</option></select>
         <input type="number" id="amountToAdd" placeholder="NESO" class="input-field amount-input">
         <button id="addToListBtn" class="add-button">↓ リストに追加</button>
+      </div>
+    </div>
+
+    <div id="multiAddSection">
+      <h3>複数宛先に分配</h3>
+      <div class="distribute-form">
+        <select id="multiAddressSelect" class="input-field" multiple size="5"></select>
+        <input type="number" id="totalAmountToDistribute" placeholder="分配する合計NESO" class="input-field">
+        <button id="distributeBtn" class="add-button">↓ 分配してリストに追加</button>
       </div>
     </div>
 

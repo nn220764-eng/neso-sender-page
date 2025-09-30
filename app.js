@@ -4,10 +4,16 @@ const connectBtn = document.getElementById('connectBtn');
 const sendBtn = document.getElementById('sendBtn');
 const addToListBtn = document.getElementById('addToListBtn');
 const batchList = document.getElementById('batchList');
-const addressBookSelect = document.getElementById('addressBookSelect');
+const singleAddressSelect = document.getElementById('singleAddressSelect');
 const amountToAdd = document.getElementById('amountToAdd');
-const addressBookSection = document.getElementById('addressBookSection');
-const toggleAddressBookBtn = document.getElementById('toggleAddressBookBtn');
+const multiAddressSelect = document.getElementById('multiAddressSelect');
+const totalAmountToDistribute = document.getElementById('totalAmountToDistribute');
+const distributeBtn = document.getElementById('distributeBtn');
+
+const singleAddSection = document.getElementById('singleAddSection');
+const multiAddSection = document.getElementById('multiAddSection');
+const toggleSingleAddBtn = document.getElementById('toggleSingleAddBtn');
+const toggleMultiAddBtn = document.getElementById('toggleMultiAddBtn');
 
 // --- アドレス帳 ---
 // ここに名前とアドレスのリストを追加・編集してください
@@ -118,7 +124,7 @@ async function sendBatchNESO(){
 
 // アドレス帳から送金リストへ追加
 function addRecipientToList() {
-  const selectedAddress = addressBookSelect.value;
+  const selectedAddress = singleAddressSelect.value;
   const amount = amountToAdd.value;
 
   if (!selectedAddress) { alert("プルダウンから宛先を選択してください。"); return; }
@@ -134,25 +140,71 @@ function addRecipientToList() {
   }
   // 入力欄をクリア
   amountToAdd.value = '';
-  addressBookSelect.value = '';
+  singleAddressSelect.value = '';
 }
 
-// アドレス帳セクションの表示を切り替える
-function toggleAddressBook() {
-  const isHidden = addressBookSection.style.display === 'none' || addressBookSection.style.display === '';
-  if (isHidden) {
-    addressBookSection.style.display = 'block';
-    toggleAddressBookBtn.textContent = 'アドレス帳を閉じる';
+// 複数宛先に分配してリストに追加
+function distributeAndAddToList() {
+  const selectedOptions = Array.from(multiAddressSelect.selectedOptions);
+  const totalAmount = totalAmountToDistribute.value;
+
+  if (selectedOptions.length === 0) {
+    alert("分配先の宛先を1つ以上選択してください。");
+    return;
+  }
+  if (!totalAmount || parseFloat(totalAmount) <= 0) {
+    alert("分配する合計NESOを正しく入力してください。");
+    return;
+  }
+
+  const amountPerRecipient = Math.floor(parseFloat(totalAmount) / selectedOptions.length);
+
+  if (amountPerRecipient < 1) {
+    alert("分配後のNESOが1未満になるため、処理を中止しました。合計数量を増やしてください。");
+    return;
+  }
+
+  const newLines = selectedOptions.map(option => `${option.value},${amountPerRecipient}`).join('\n');
+
+  if (batchList.value.trim() !== '') {
+    batchList.value += '\n' + newLines;
   } else {
-    addressBookSection.style.display = 'none';
-    toggleAddressBookBtn.textContent = 'アドレス帳を開く';
+    batchList.value = newLines;
+  }
+
+  // 入力欄をクリア
+  totalAmountToDistribute.value = '';
+  multiAddressSelect.selectedIndex = -1; // 選択を解除
+}
+
+// 単一宛先追加セクションの表示を切り替える
+function toggleSingleAdd() {
+  const isHidden = singleAddSection.style.display === 'none' || singleAddSection.style.display === '';
+  if (isHidden) {
+    singleAddSection.style.display = 'block';
+    multiAddSection.style.display = 'none'; // もう片方は閉じる
+  } else {
+    singleAddSection.style.display = 'none';
+  }
+}
+
+// 複数宛先分配セクションの表示を切り替える
+function toggleMultiAdd() {
+  const isHidden = multiAddSection.style.display === 'none' || multiAddSection.style.display === '';
+  if (isHidden) {
+    multiAddSection.style.display = 'block';
+    singleAddSection.style.display = 'none'; // もう片方は閉じる
+  } else {
+    multiAddSection.style.display = 'none';
   }
 }
 
 connectBtn.onclick = connectWallet;
 sendBtn.onclick = sendBatchNESO;
 addToListBtn.onclick = addRecipientToList;
-toggleAddressBookBtn.onclick = toggleAddressBook;
+distributeBtn.onclick = distributeAndAddToList;
+toggleSingleAddBtn.onclick = toggleSingleAdd;
+toggleMultiAddBtn.onclick = toggleMultiAdd;
 
 // MetaMask 状態変化監視
 if (window.ethereum) {
@@ -165,8 +217,13 @@ if (window.ethereum) {
 
 // ページ読み込み時にアドレス帳をプルダウンに設定
 document.addEventListener('DOMContentLoaded', () => {
+  // プルダウンメニューをクリア
+  singleAddressSelect.innerHTML = '<option value="">宛先を選択...</option>';
+  multiAddressSelect.innerHTML = '';
+
   ADDRESS_BOOK.forEach(entry => {
     const option = new Option(`${entry.name} (${entry.address})`, entry.address);
-    addressBookSelect.add(option);
+    singleAddressSelect.add(option.cloneNode(true));
+    multiAddressSelect.add(option.cloneNode(true));
   });
 });
