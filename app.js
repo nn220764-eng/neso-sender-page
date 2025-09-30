@@ -120,7 +120,7 @@ function addRecipientToList() {
   const amount = amountToAdd.value;
 
   if (!selectedAddress) { alert("プルダウンから宛先を選択してください。"); return; }
-  if (!amount || parseFloat(amount) <= 0) { alert("数量を正しく入力してください。"); return; }
+  if (!amount || parseFloat(amount) <= 0) { alert("NESOを正しく入力してください。"); return; }
 
   const newLine = `${selectedAddress},${amount}`;
   
