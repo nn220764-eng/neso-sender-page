@@ -51,6 +51,18 @@ button, select {
 #connectBtn { background-color: #1877f2; color: white; }
 #connectBtn:hover { background-color: #166fe5; }
 
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+.button-group > button {
+  width: auto;
+  flex-grow: 1;
+}
+
+.toggle-button { background-color: #ffc107; color: black; }
+.toggle-button:hover { background-color: #e0a800; }
+
 .send-button { background-color: #42b72a; color: white; }
 .send-button:hover { background-color: #36a420; }
 
@@ -109,4 +121,8 @@ pre {
   word-wrap: break-word;
   max-height: 300px;
   overflow-y: auto; /* ログが多くなったらスクロール */
+}
+
+#addressBookSection {
+  display: none; /* デフォルトで非表示 */
 }

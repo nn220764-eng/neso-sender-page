@@ -11,13 +11,18 @@
   <div class="container">
     <h2>Bツール</h2>
     <div id="status" class="status-box">未接続</div>
-    <button id="connectBtn">MetaMask 接続</button>
+    <div class="button-group">
+      <button id="connectBtn">MetaMask 接続</button>
+      <button id="toggleAddressBookBtn" class="toggle-button">アドレス帳を開く</button>
+    </div>
 
-    <h3>宛先を選択してリストに追加</h3>
-    <div class="add-form">
-      <select id="addressBookSelect" class="input-field"><option value="">宛先を選択...</option></select>
-      <input type="number" id="amountToAdd" placeholder="NESO" class="input-field amount-input">
-      <button id="addToListBtn" class="add-button">↓ リストに追加</button>
+    <div id="addressBookSection">
+      <h3>宛先を選択してリストに追加</h3>
+      <div class="add-form">
+        <select id="addressBookSelect" class="input-field"><option value="">宛先を選択...</option></select>
+        <input type="number" id="amountToAdd" placeholder="NESO" class="input-field amount-input">
+        <button id="addToListBtn" class="add-button">↓ リストに追加</button>
+      </div>
     </div>
 
     <h3>送金リスト（1行 = アドレス,NESO）</h3>

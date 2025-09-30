@@ -6,6 +6,8 @@ const addToListBtn = document.getElementById('addToListBtn');
 const batchList = document.getElementById('batchList');
 const addressBookSelect = document.getElementById('addressBookSelect');
 const amountToAdd = document.getElementById('amountToAdd');
+const addressBookSection = document.getElementById('addressBookSection');
+const toggleAddressBookBtn = document.getElementById('toggleAddressBookBtn');
 
 // --- アドレス帳 ---
 // ここに名前とアドレスのリストを追加・編集してください
@@ -132,11 +134,25 @@ function addRecipientToList() {
   }
   // 入力欄をクリア
   amountToAdd.value = '';
+  addressBookSelect.value = '';
+}
+
+// アドレス帳セクションの表示を切り替える
+function toggleAddressBook() {
+  const isHidden = addressBookSection.style.display === 'none' || addressBookSection.style.display === '';
+  if (isHidden) {
+    addressBookSection.style.display = 'block';
+    toggleAddressBookBtn.textContent = 'アドレス帳を閉じる';
+  } else {
+    addressBookSection.style.display = 'none';
+    toggleAddressBookBtn.textContent = 'アドレス帳を開く';
+  }
 }
 
 connectBtn.onclick = connectWallet;
 sendBtn.onclick = sendBatchNESO;
 addToListBtn.onclick = addRecipientToList;
+toggleAddressBookBtn.onclick = toggleAddressBook;
 
 // MetaMask 状態変化監視
 if (window.ethereum) {
