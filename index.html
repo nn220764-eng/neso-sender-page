@@ -14,7 +14,7 @@
     <div class="button-group">
       <button id="connectBtn">MetaMask 接続</button>
       <button id="toggleSingleAddBtn" class="toggle-button">単一宛先を追加</button>
-      <button id="toggleMultiAddBtn" class="toggle-button">複数宛先に分配</button>
+      <button id="togglePtDistributeBtn" class="toggle-button pt-button">PT分配</button>
     </div>
 
     <div id="singleAddSection">
@@ -26,12 +26,28 @@
       </div>
     </div>
 
-    <div id="multiAddSection">
-      <h3>複数宛先に分配</h3>
+    <div id="ptDistributeSection">
+      <h3>PT分配ログ</h3>
       <div class="distribute-form">
-        <select id="multiAddressSelect" class="input-field" multiple size="5"></select>
-        <input type="number" id="totalAmountToDistribute" placeholder="分配する合計NESO" class="input-field">
-        <button id="distributeBtn" class="add-button">↓ 分配してリストに追加</button>
+        <label>参加PTメンバー (複数選択可)</label>
+        <select id="partyMembersSelect" class="input-field" multiple size="10"></select>
+
+        <label>分配種別</label>
+        <div class="radio-group">
+          <label><input type="radio" name="rewardType" value="neso" checked> NESO</label>
+          <label><input type="radio" name="rewardType" value="item"> アイテム</label>
+        </div>
+
+        <div id="itemDetails">
+          <input type="text" id="itemName" placeholder="アイテム名" class="input-field">
+          <div class="item-sub-details">
+            <input type="number" id="itemPrice" placeholder="アイテム売値 (単価)" class="input-field">
+            <input type="number" id="itemQuantity" placeholder="アイテム数量" class="input-field">
+          </div>
+        </div>
+
+        <div id="nesoDetails"><input type="number" id="rewardNesoAmount" placeholder="NESO総額" class="input-field"></div>
+        <button id="addPtRewardBtn" class="add-button">↓ 分配してリストに追加</button> 
       </div>
     </div>
 

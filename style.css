@@ -63,6 +63,9 @@ button, select {
 .toggle-button { background-color: #ffc107; color: black; }
 .toggle-button:hover { background-color: #e0a800; }
 
+.pt-button { background-color: #9c27b0; color: white; }
+.pt-button:hover { background-color: #7b1fa2; }
+
 .send-button { background-color: #42b72a; color: white; }
 .send-button:hover { background-color: #36a420; }
 
@@ -90,9 +93,6 @@ button, select {
 .distribute-form > .input-field {
   width: 100%;
 }
-.section-divider {
-  margin-top: 24px;
-}
 
 .input-field {
   padding: 10px;
@@ -103,7 +103,7 @@ button, select {
 }
 
 /* 複数選択リストのスタイル */
-#multiAddressSelect {
+#partyMembersSelect {
   height: auto;
 }
 
@@ -141,6 +141,25 @@ pre {
 }
 
 #singleAddSection,
-#multiAddSection {
+#ptDistributeSection {
   display: none; /* デフォルトで非表示 */
 }
+
+#itemDetails {
+  display: none; /* アイテム詳細をデフォルトで非表示 */
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.item-sub-details {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+.radio-group label { font-weight: normal; }

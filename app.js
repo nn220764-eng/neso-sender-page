@@ -6,14 +6,22 @@ const addToListBtn = document.getElementById('addToListBtn');
 const batchList = document.getElementById('batchList');
 const singleAddressSelect = document.getElementById('singleAddressSelect');
 const amountToAdd = document.getElementById('amountToAdd');
-const multiAddressSelect = document.getElementById('multiAddressSelect');
-const totalAmountToDistribute = document.getElementById('totalAmountToDistribute');
-const distributeBtn = document.getElementById('distributeBtn');
 
 const singleAddSection = document.getElementById('singleAddSection');
-const multiAddSection = document.getElementById('multiAddSection');
 const toggleSingleAddBtn = document.getElementById('toggleSingleAddBtn');
-const toggleMultiAddBtn = document.getElementById('toggleMultiAddBtn');
+
+// PT分配機能用
+const ptDistributeSection = document.getElementById('ptDistributeSection');
+const togglePtDistributeBtn = document.getElementById('togglePtDistributeBtn');
+const partyMembersSelect = document.getElementById('partyMembersSelect');
+const rewardTypeRadios = document.querySelectorAll('input[name="rewardType"]');
+const itemDetails = document.getElementById('itemDetails');
+const itemName = document.getElementById('itemName');
+const itemQuantity = document.getElementById('itemQuantity');
+const itemPrice = document.getElementById('itemPrice');
+const nesoDetails = document.getElementById('nesoDetails');
+const rewardNesoAmount = document.getElementById('rewardNesoAmount');
+const addPtRewardBtn = document.getElementById('addPtRewardBtn');
 
 // --- アドレス帳 ---
 // ここに名前とアドレスのリストを追加・編集してください
@@ -143,28 +151,70 @@ function addRecipientToList() {
   singleAddressSelect.value = '';
 }
 
-// 複数宛先に分配してリストに追加
-function distributeAndAddToList() {
-  const selectedOptions = Array.from(multiAddressSelect.selectedOptions);
-  const totalAmount = totalAmountToDistribute.value;
+// 単一宛先追加セクションの表示を切り替える
+function toggleSingleAdd() {
+  const isHidden = singleAddSection.style.display === 'none' || singleAddSection.style.display === '';
+  if (isHidden) {
+    singleAddSection.style.display = 'block';
+    ptDistributeSection.style.display = 'none';
+  } else {
+    singleAddSection.style.display = 'none';
+  }
+}
 
-  if (selectedOptions.length === 0) {
-    alert("分配先の宛先を1つ以上選択してください。");
+// 複数宛先分配セクションの表示を切り替える
+
+// PT分配セクションの表示を切り替える
+function togglePtDistribute() {
+  const isHidden = ptDistributeSection.style.display === 'none' || ptDistributeSection.style.display === '';
+  if (isHidden) {
+    ptDistributeSection.style.display = 'block';
+    singleAddSection.style.display = 'none';
+  } else {
+    ptDistributeSection.style.display = 'none';
+  }
+}
+
+// PT分配の報酬を送金リストに追加する
+function addPtRewardToList() {
+  const selectedMembers = Array.from(partyMembersSelect.selectedOptions);
+  if (selectedMembers.length === 0) {
+    alert("参加PTメンバーを1人以上選択してください。");
     return;
   }
-  if (!totalAmount || parseFloat(totalAmount) <= 0) {
-    alert("分配する合計NESOを正しく入力してください。");
-    return;
+  const memberNames = selectedMembers.map(opt => opt.text.split(' (')[0]).join(', ');
+
+  const rewardType = document.querySelector('input[name="rewardType"]:checked').value;
+  let totalNesoAmount = 0;
+  let logMessage = '';
+
+  if (rewardType === 'item') {
+    const name = itemName.value;
+    const quantity = parseFloat(itemQuantity.value);
+    const price = parseFloat(itemPrice.value);
+    if (!name || !(quantity > 0) || !(price > 0)) {
+      alert("アイテム名、数量、売値を正しく入力してください。");
+      return;
+    }
+    totalNesoAmount = quantity * price;
+    logMessage = `[PT分配] ${memberNames} に各 ${Math.floor(totalNesoAmount / selectedMembers.length)} NESO をリストに追加しました。 (アイテム: ${name} x${quantity}, 単価: ${price}, 総額: ${totalNesoAmount} NESO)`;
+  } else { // neso
+    totalNesoAmount = parseFloat(rewardNesoAmount.value);
+    if (!(totalNesoAmount > 0)) {
+      alert("NESO総額を正しく入力してください。");
+      return;
+    }
+    logMessage = `[PT分配] ${memberNames} に各 ${Math.floor(totalNesoAmount / selectedMembers.length)} NESO をリストに追加しました。`;
   }
 
-  const amountPerRecipient = Math.floor(parseFloat(totalAmount) / selectedOptions.length);
+  const amountPerRecipient = Math.floor(totalNesoAmount / selectedMembers.length);
 
   if (amountPerRecipient < 1) {
     alert("分配後のNESOが1未満になるため、処理を中止しました。合計数量を増やしてください。");
     return;
   }
 
-  const newLines = selectedOptions.map(option => `${option.value},${amountPerRecipient}`).join('\n');
+  const newLines = selectedMembers.map(option => `${option.value},${amountPerRecipient}`).join('\n');
 
   if (batchList.value.trim() !== '') {
     batchList.value += '\n' + newLines;
@@ -172,39 +222,35 @@ function distributeAndAddToList() {
     batchList.value = newLines;
   }
 
+  log(logMessage);
+
   // 入力欄をクリア
-  totalAmountToDistribute.value = '';
-  multiAddressSelect.selectedIndex = -1; // 選択を解除
+  partyMembersSelect.selectedIndex = -1;
+  itemName.value = '';
+  itemQuantity.value = '';
+  itemPrice.value = '';
+  rewardNesoAmount.value = '';
 }
 
-// 単一宛先追加セクションの表示を切り替える
-function toggleSingleAdd() {
-  const isHidden = singleAddSection.style.display === 'none' || singleAddSection.style.display === '';
-  if (isHidden) {
-    singleAddSection.style.display = 'block';
-    multiAddSection.style.display = 'none'; // もう片方は閉じる
-  } else {
-    singleAddSection.style.display = 'none';
-  }
-}
-
-// 複数宛先分配セクションの表示を切り替える
-function toggleMultiAdd() {
-  const isHidden = multiAddSection.style.display === 'none' || multiAddSection.style.display === '';
-  if (isHidden) {
-    multiAddSection.style.display = 'block';
-    singleAddSection.style.display = 'none'; // もう片方は閉じる
-  } else {
-    multiAddSection.style.display = 'none';
-  }
-}
+// ラジオボタンの変更を監視してアイテム詳細の表示を切り替える
+rewardTypeRadios.forEach(radio => {
+  radio.addEventListener('change', (event) => {
+    if (event.target.value === 'item') {
+      itemDetails.style.display = 'grid';
+      nesoDetails.style.display = 'none';
+    } else {
+      itemDetails.style.display = 'none';
+      nesoDetails.style.display = 'block';
+    }
+  });
+});
 
 connectBtn.onclick = connectWallet;
 sendBtn.onclick = sendBatchNESO;
 addToListBtn.onclick = addRecipientToList;
-distributeBtn.onclick = distributeAndAddToList;
 toggleSingleAddBtn.onclick = toggleSingleAdd;
-toggleMultiAddBtn.onclick = toggleMultiAdd;
+togglePtDistributeBtn.onclick = togglePtDistribute;
+addPtRewardBtn.onclick = addPtRewardToList;
 
 // MetaMask 状態変化監視
 if (window.ethereum) {
@@ -219,11 +265,11 @@ if (window.ethereum) {
 document.addEventListener('DOMContentLoaded', () => {
   // プルダウンメニューをクリア
   singleAddressSelect.innerHTML = '<option value="">宛先を選択...</option>';
-  multiAddressSelect.innerHTML = '';
+  partyMembersSelect.innerHTML = '';
 
   ADDRESS_BOOK.forEach(entry => {
     const option = new Option(`${entry.name} (${entry.address})`, entry.address);
     singleAddressSelect.add(option.cloneNode(true));
-    multiAddressSelect.add(option.cloneNode(true));
+    partyMembersSelect.add(option.cloneNode(true));
   });
 });
