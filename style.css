@@ -1,22 +1,82 @@
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background-color: #f0f2f5; /* 明るいグレーの背景 */
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
   margin: 0;
-  padding: 20px;
   box-sizing: border-box;
+  height: 100vh;
+  overflow: hidden; /* ページ全体のスクロールを無効化 */
+}
+
+.page-wrapper {
+  display: flex;
+  gap: 30px;
+  max-width: 1400px; /* 少し幅を広げます */
+  margin: 0 auto;
+  padding: 20px;
+  height: 100%;
+}
+
+.main-content {
+  flex: 3; /* 幅の比率を調整 */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  overflow-y: auto; /* 内容がはみ出たらスクロール */
+}
+.log-panel {
+  flex: 2; /* 幅の比率を調整 */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* 内容がはみ出たらスクロール */
+}
+
+.description-container {
+  flex: 2; /* 幅の比率を調整 */
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 100%;
+  overflow-y: auto; /* 内容がはみ出たらスクロール */
+}
+.description-container h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.description-container ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  list-style-type: none;
+}
+.description-container ul li {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+}
+.description-container .icon {
+  margin-right: 10px;
+  font-size: 1.2em;
+  line-height: 1.4;
+  width: 20px;
+}
+.description-container ul li div {
+  flex: 1;
+}
+
+.small-note {
+  font-size: 12px;
+  color: #606770;
+  margin-top: 15px;
 }
 
 .container {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 640px;
 }
 
 h2 {
@@ -48,7 +108,19 @@ button, select {
   width: 100%;
 }
 
-#connectBtn { background-color: #1877f2; color: white; }
+button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+#connectBtn {
+  background-color: #1877f2;
+  color: white;
+  padding: 12px 16px; /* 少し大きくする */
+  font-size: 18px;   /* 文字を大きくする */
+  margin-bottom: 15px; /* 下のボタンとの間隔をあける */
+}
 #connectBtn:hover { background-color: #166fe5; }
 
 .button-group {
@@ -63,8 +135,8 @@ button, select {
 .toggle-button { background-color: #ffc107; color: black; }
 .toggle-button:hover { background-color: #e0a800; }
 
-.pt-button { background-color: #9c27b0; color: white; }
-.pt-button:hover { background-color: #7b1fa2; }
+.distribute-button { background-color: #9c27b0; color: white; }
+.distribute-button:hover { background-color: #7b1fa2; }
 
 .send-button { background-color: #42b72a; color: white; }
 .send-button:hover { background-color: #36a420; }
@@ -76,6 +148,24 @@ button, select {
   padding: 8px 12px;
 }
 .add-button:hover { background-color: #5a6268; }
+
+.clear-button {
+  background-color: #dc3545;
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  width: auto;
+  margin: 0;
+}
+.clear-button:hover {
+  background-color: #c82333;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .add-form {
   display: grid;
@@ -100,6 +190,43 @@ button, select {
   border-radius: 6px;
   font-size: 14px;
   height: 40px;
+}
+
+.checkbox-list-container {
+  border: 1px solid #dddfe2;
+  border-radius: 6px;
+  height: 200px; /* 約5件分の高さ + 余白 */
+  overflow-y: auto;
+  padding: 5px;
+}
+.member-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.member-item:hover {
+  background-color: #f0f2f5;
+}
+.member-item input[type="checkbox"] {
+  width: auto;
+  height: auto;
+  margin-right: 10px;
+}
+.member-item label {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+.member-name {
+  color: #00529b;
+  font-weight: bold;
+}
+.member-address {
+  color: #606770;
+  font-size: 12px;
 }
 
 /* 複数選択リストのスタイル */
@@ -129,20 +256,26 @@ textarea:focus, .input-field:focus {
   box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
 }
 
-pre {
-  background: #f5f5f5;
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
+pre#info {
+  flex-grow: 1;
   white-space: pre-wrap;
   word-wrap: break-word;
-  max-height: 300px;
+  height: 0; /* flex-grow と組み合わせるための設定 */
   overflow-y: auto; /* ログが多くなったらスクロール */
 }
 
 #singleAddSection,
-#ptDistributeSection {
+#distributeSection {
   display: none; /* デフォルトで非表示 */
+}
+.section-box {
+  border: 1px solid #dddfe2;
+  padding: 16px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+#distributeSection.section-box {
+  border-color: #9c27b0; /* 分配ボタンの色に合わせる */
 }
 
 #itemDetails {
@@ -163,3 +296,34 @@ pre {
   margin-bottom: 10px;
 }
 .radio-group label { font-weight: normal; }
+
+.checkbox-group {
+  grid-column: 1 / -1; /* 2列にまたがるように設定 */
+  display: flex;
+  align-items: center;
+}
+.checkbox-group.single-line {
+  grid-column: 1 / -1;
+  margin-bottom: 10px;
+}
+.checkbox-group label { font-weight: normal; }
+
+/* ログのスタイル */
+pre#info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #f5f5f5;
+  padding: 15px;
+}
+.log-entry {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 15px;
+}
+.log-entry:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.log-name { color: #1877f2; font-weight: bold; }
+.log-neso { color: #42b72a; font-weight: bold; }
