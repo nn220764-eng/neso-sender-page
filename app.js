@@ -2,7 +2,27 @@ const statusEl = document.getElementById('status');
 const infoEl = document.getElementById('info');
 const connectBtn = document.getElementById('connectBtn');
 const sendBtn = document.getElementById('sendBtn');
+const addToListBtn = document.getElementById('addToListBtn');
 const batchList = document.getElementById('batchList');
+const addressBookSelect = document.getElementById('addressBookSelect');
+const amountToAdd = document.getElementById('amountToAdd');
+
+// --- アドレス帳 ---
+// ここに名前とアドレスのリストを追加・編集してください
+const ADDRESS_BOOK = [
+  { name: "とずんぷ", address: "0x78B7e02A145531146Ae6F775AcC268F039c19f34" },
+  { name: "げこ", address: "0xf050864d86aBEC249d0608e83c859c05922c9209" },
+  { name: "全自動掃除機", address: "0x0d0501c4Bd4c4E6547578bBCc973789182b82996" },
+  { name: "りーばん", address: "0x25916fa1ad3ACe825F71f9c78A0fE1328Cc3aBb2" },
+  { name: "shikis", address: "0x032C1264B64FFb10c405862eEE61Cb4860289F03" },
+  { name: "poyupuri", address: "0xaa95cF1ECA2b74De15f98Cb5408a974374B42d7B" },
+  { name: "satou", address: "0xeE7670e0Eb30932868CE2013228a030D94DB949A" },
+  { name: "tonga_ri", address: "0xE1Dc7F44706346D870824bB22779797Ff8aAd480" },
+  { name: "トマトインティライミ", address: "0xd40758451314Fc8827a2913Ada2CE5AB3dC34eC0" },
+  { name: "あんめるつ", address: "0x47eF79F9d201b8fa01E5066dad14a0Bcd63424dd" },
+  { name: "てん", address: "0x280751bAC1a5B6fDD01a94259227703E0F489834" },
+  { name: "k", address: "0xc8803Eab170F507f0172d9A7C5081581C6d7893" }
+];
 
 const HENESYS_RPC_URL = "https://henesys-rpc.msu.io";
 const NESO_CONTRACT_ADDRESS = "0x07E49Ad54FcD23F6e7B911C2068F0148d1827c08";
@@ -14,7 +34,11 @@ const ERC20_ABI = [
 
 let provider, signer, nesoContract;
 
-function log(s){ infoEl.textContent += s + "\n"; }
+function log(s){
+  infoEl.textContent += s + "\n";
+  // ログ表示エリアを自動で一番下までスクロール
+  infoEl.scrollTop = infoEl.scrollHeight;
+}
 
 async function connectWallet(){
   if (!window.ethereum) { alert("MetaMask が見つかりません"); return; }
@@ -90,8 +114,29 @@ async function sendBatchNESO(){
   log("全送金処理終了");
 }
 
+// アドレス帳から送金リストへ追加
+function addRecipientToList() {
+  const selectedAddress = addressBookSelect.value;
+  const amount = amountToAdd.value;
+
+  if (!selectedAddress) { alert("プルダウンから宛先を選択してください。"); return; }
+  if (!amount || parseFloat(amount) <= 0) { alert("数量を正しく入力してください。"); return; }
+
+  const newLine = `${selectedAddress},${amount}`;
+  
+  // テキストエリアが空でなければ改行を追加
+  if (batchList.value.trim() !== '') {
+    batchList.value += '\n' + newLine;
+  } else {
+    batchList.value = newLine;
+  }
+  // 入力欄をクリア
+  amountToAdd.value = '';
+}
+
 connectBtn.onclick = connectWallet;
 sendBtn.onclick = sendBatchNESO;
+addToListBtn.onclick = addRecipientToList;
 
 // MetaMask 状態変化監視
 if (window.ethereum) {
@@ -101,3 +146,11 @@ if (window.ethereum) {
   window.ethereum.on && window.ethereum.on('chainChanged', (chainId) => {
   });
 }
+
+// ページ読み込み時にアドレス帳をプルダウンに設定
+document.addEventListener('DOMContentLoaded', () => {
+  ADDRESS_BOOK.forEach(entry => {
+    const option = new Option(`${entry.name} (${entry.address})`, entry.address);
+    addressBookSelect.add(option);
+  });
+});

@@ -10,12 +10,20 @@
 <body>
   <div class="container">
     <h2>Bツール</h2>
-    <div id="status">未接続</div>
+    <div id="status" class="status-box">未接続</div>
     <button id="connectBtn">MetaMask 接続</button>
+
+    <h3>宛先を選択してリストに追加</h3>
+    <div class="add-form">
+      <select id="addressBookSelect" class="input-field"><option value="">宛先を選択...</option></select>
+      <input type="number" id="amountToAdd" placeholder="数量" class="input-field amount-input">
+      <button id="addToListBtn" class="add-button">↓ リストに追加</button>
+    </div>
+
     <h3>送金リスト（1行 = アドレス,数量）</h3>
     <textarea id="batchList" placeholder="0x宛先アドレス,数量&#10;0x宛先アドレス,数量"></textarea>
     <br>
-    <button id="sendBtn">複数送金開始</button>
+    <button id="sendBtn" class="send-button">複数送金開始</button>
 
     <pre id="info"></pre>
   </div>
