@@ -321,9 +321,6 @@ function addDistributeToList() {
   log(logMessage);
 
   // 入力欄をクリア
-  selectedCheckboxes.forEach(cb => {
-    cb.checked = false;
-  });
   itemName.value = '';
   itemQuantity.value = '';
   itemPrice.value = '';
