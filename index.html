@@ -8,16 +8,86 @@
   <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h2>Bツール</h2>
-    <div id="status">未接続</div>
-    <button id="connectBtn">MetaMask 接続</button>
-    <h3>送金リスト（1行 = アドレス,数量）</h3>
-    <textarea id="batchList" placeholder="0x宛先アドレス,数量&#10;0x宛先アドレス,数量"></textarea>
-    <br>
-    <button id="sendBtn">複数送金開始</button>
+  <div class="page-wrapper">
+    <div class="description-container">
+      <h2>このツールについて</h2>
+      <p>このツールは、Henesysネットワーク上でNESOトークンを複数の宛先に一括で送金するためのウェブアプリケーションです。</p>
+      <h4>主な機能</h4>
+      <ul>
+        <li><span class="icon">🔗</span><div><strong>MetaMask連携:</strong> ウォレットに接続し、Henesysネットワークへ自動で切り替えます。</div></li>
+        <li><span class="icon">👤</span><div><strong>単一追加:</strong> 送金リストに個別の宛先とNESOを追加できます。</div></li>
+        <li><span class="icon">👥</span><div><strong>分配:</strong> アイテム売上やNESOをメンバーに均等分配し、リストに追加します。</div></li>
+        <li><span class="icon">🔄</span><div><strong>自動合算:</strong> 送金リストに同じ宛先が追加された場合、NESOは自動で合算されます。</div></li>
+      </ul>
+      <p class="small-note">※分配機能での計算時、小数点以下のNESOは切り捨てられます。</p>
+    </div>
+    <div class="main-content">
+      <div class="container">
+        <h2>Bツール</h2>
+        <div id="status" class="status-box">未接続</div>
+        <button id="connectBtn">MetaMask 接続</button>
+        <div class="button-group">
+          <button id="toggleSingleAddBtn" class="toggle-button">単一宛先を追加</button>
+          <button id="toggleDistributeBtn" class="toggle-button distribute-button">分配</button>
+        </div>
 
-    <pre id="info"></pre>
+        <div id="singleAddSection">
+          <h3>単一の宛先を追加</h3>
+          <div class="add-form">
+            <select id="singleAddressSelect" class="input-field"><option value="">宛先を選択...</option></select>
+            <input type="number" id="amountToAdd" placeholder="NESO" class="input-field amount-input">
+            <button id="addToListBtn" class="add-button">↓ リストに追加</button>
+          </div>
+        </div>
+
+        <div id="distributeSection">
+          <h3>分配</h3>
+          <div class="distribute-form">
+            <label>参加メンバー (複数選択可)</label>
+            <div id="partyMembersSelect" class="checkbox-list-container"></div>
+            <div class="checkbox-group single-line">
+              <label><input type="checkbox" id="includeSelfCheckbox" checked> <strong>自分を分配に含める</strong></label>
+            </div>
+
+            <label>分配種別</label>
+            <div class="radio-group">
+              <label><input type="radio" name="rewardType" value="neso" checked> NESO</label>
+              <label><input type="radio" name="rewardType" value="item"> アイテム</label>
+            </div>
+
+            <div id="itemDetails">
+              <input type="text" id="itemName" placeholder="アイテム名" class="input-field">
+              <div class="item-sub-details">
+                <input type="number" id="itemQuantity" placeholder="数量" class="input-field">
+                <input type="number" id="itemPrice" placeholder="売値 (単価)" class="input-field">
+              </div>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="applyFeeCheckbox"> 手数料を考慮する (売値を0.95倍)</label>
+              </div>
+            </div>
+
+            <div id="nesoDetails"><input type="number" id="rewardNesoAmount" placeholder="NESO総額" class="input-field"></div>
+            <input type="text" id="distributeMemo" placeholder="メモ (任意)" class="input-field">
+            <button id="addDistributeBtn" class="add-button">↓ 分配してリストに追加</button> 
+          </div>
+        </div>
+
+        <div class="list-header">
+          <h3>送金リスト（1行 = アドレス,NESO）</h3>
+          <button id="clearListBtn" class="clear-button">リストをクリア</button>
+        </div>
+        <textarea id="batchList" placeholder="0x宛先アドレス,NESO&#10;0x宛先アドレス,NESO"></textarea>
+        <br>
+        <button id="sendBtn" class="send-button">送金開始</button>
+      </div>
+    </div>
+    <div class="log-panel">
+      <div class="list-header">
+        <h2>実行ログ</h2>
+        <button id="clearLogBtn" class="clear-button">ログをクリア</button>
+      </div>
+      <pre id="info"></pre>
+    </div>
   </div>
 
   <script src="app.js" defer></script>
