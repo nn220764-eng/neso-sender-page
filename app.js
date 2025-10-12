@@ -11,8 +11,8 @@ const singleAddSection = document.getElementById('singleAddSection');
 const toggleSingleAddBtn = document.getElementById('toggleSingleAddBtn');
 
 // 分配機能用
-const distributeSection = document.getElementById('distributeSection');
 const toggleDistributeBtn = document.getElementById('toggleDistributeBtn');
+const distributeModal = document.getElementById('distributeModal');
 const partyMembersSelect = document.getElementById('partyMembersSelect');
 const rewardTypeRadios = document.querySelectorAll('input[name="rewardType"]');
 const itemDetails = document.getElementById('itemDetails');
@@ -27,6 +27,7 @@ const addDistributeBtn = document.getElementById('addDistributeBtn');
 const distributeMemo = document.getElementById('distributeMemo');
 const clearListBtn = document.getElementById('clearListBtn');
 const clearLogBtn = document.getElementById('clearLogBtn');
+const closeModalBtn = document.getElementById('closeModalBtn');
 
 // --- アドレス帳 ---
 // ここに名前とアドレスのリストを追加・編集してください
@@ -217,26 +218,22 @@ function updateBatchList(newEntries) { // newEntries: [{ address: string, amount
 // 単一宛先追加セクションの表示を切り替える
 function toggleSingleAdd() {
   const isHidden = singleAddSection.style.display === 'none' || singleAddSection.style.display === '';
-  if (isHidden) {
-    singleAddSection.style.display = 'block';
-    singleAddSection.classList.add('section-box');
-    distributeSection.style.display = 'none';
-  } else {
-    singleAddSection.style.display = 'none';
-    singleAddSection.classList.remove('section-box');
-  }
+  singleAddSection.style.display = isHidden ? 'block' : 'none';
 }
 
-// 分配セクションの表示を切り替える
-function toggleDistribute() {
-  const isHidden = distributeSection.style.display === 'none' || distributeSection.style.display === '';
-  if (isHidden) {
-    distributeSection.style.display = 'block';
-    distributeSection.classList.add('section-box');
-    singleAddSection.style.display = 'none';
-  } else {
-    distributeSection.style.display = 'none';
-    distributeSection.classList.remove('section-box');
+// --- 分配モーダルの制御 ---
+function openDistributeModal() {
+  distributeModal.style.display = 'block';
+}
+
+function closeDistributeModal() {
+  distributeModal.style.display = 'none';
+}
+
+// モーダルの外側をクリックしたときに閉じる
+window.onclick = function(event) {
+  if (event.target == distributeModal) {
+    closeDistributeModal();
   }
 }
 
@@ -358,10 +355,11 @@ connectBtn.onclick = connectWallet;
 sendBtn.onclick = sendBatchNESO;
 addToListBtn.onclick = addRecipientToList;
 toggleSingleAddBtn.onclick = toggleSingleAdd;
-toggleDistributeBtn.onclick = toggleDistribute;
+toggleDistributeBtn.onclick = openDistributeModal;
 addDistributeBtn.onclick = addDistributeToList;
 clearListBtn.onclick = clearList;
 clearLogBtn.onclick = clearLog;
+closeModalBtn.onclick = closeDistributeModal;
 
 // MetaMask 状態変化監視
 if (window.ethereum) {
