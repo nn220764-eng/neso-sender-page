@@ -265,7 +265,8 @@ pre#info {
 }
 
 #singleAddSection,
-#distributeSection {
+#distributeSection,
+#addressBookSection {
   display: none; /* デフォルトで非表示 */
 }
 .section-box {
@@ -331,8 +332,6 @@ pre#info {
 /* アドレス帳管理 */
 .addressbook-button { background-color: #17a2b8; color: white; }
 .addressbook-button:hover { background-color: #138496; }
-
-#addressBookSection { display: none; }
 
 .ab-list {
   border: 1px solid #dddfe2;
