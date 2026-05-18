@@ -34,8 +34,14 @@
 
         <div id="addressBookSection">
           <h3>アドレス帳管理</h3>
+          <div id="adminLoginForm" class="ab-login-form">
+            <input type="password" id="adminPasswordInput" placeholder="管理者パスワード" class="input-field">
+            <button id="adminLoginBtn" class="add-button">ログイン</button>
+            <span id="adminLoginError" class="ab-login-error">パスワードが違います</span>
+          </div>
+          <button id="adminLogoutBtn" class="ab-logout-btn">管理者ログアウト</button>
           <div id="addressBookList" class="ab-list"></div>
-          <div class="ab-add-form">
+          <div id="ab-add-form" class="ab-add-form">
             <input type="text" id="newEntryName" placeholder="名前" class="input-field">
             <input type="text" id="newEntryAddress" placeholder="0x ウォレットアドレス" class="input-field">
             <button id="addEntryBtn" class="add-button">追加</button>

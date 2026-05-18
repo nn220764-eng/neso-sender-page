@@ -377,4 +377,33 @@ pre#info {
   grid-template-columns: 1fr 2fr auto;
   gap: 8px;
   align-items: center;
+  margin-top: 8px;
 }
+
+.ab-login-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.ab-login-form .input-field {
+  flex: 1;
+  margin: 0;
+  height: 36px;
+}
+.ab-login-error {
+  color: #dc3545;
+  font-size: 12px;
+  display: none;
+}
+
+.ab-logout-btn {
+  background-color: #6c757d;
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  width: auto;
+  margin: 0 0 8px 0;
+  font-weight: normal;
+}
+.ab-logout-btn:hover { background-color: #5a6268; }

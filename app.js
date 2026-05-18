@@ -28,6 +28,45 @@ const distributeMemo = document.getElementById('distributeMemo');
 const clearListBtn = document.getElementById('clearListBtn');
 const clearLogBtn = document.getElementById('clearLogBtn');
 
+// --- 管理者認証 ---
+const ADMIN_PASSWORD_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+const ADMIN_SESSION_KEY = 'nesoAdminLoggedIn';
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function isAdmin() {
+  return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+}
+
+async function adminLogin() {
+  const input = document.getElementById('adminPasswordInput').value;
+  const hash = await sha256(input);
+  if (hash === ADMIN_PASSWORD_HASH) {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+    document.getElementById('adminPasswordInput').value = '';
+    updateAdminUI();
+  } else {
+    document.getElementById('adminLoginError').style.display = 'block';
+  }
+}
+
+function adminLogout() {
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  updateAdminUI();
+}
+
+function updateAdminUI() {
+  const loggedIn = isAdmin();
+  document.getElementById('adminLoginForm').style.display = loggedIn ? 'none' : 'flex';
+  document.getElementById('adminLogoutBtn').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('adminLoginError').style.display = 'none';
+  document.getElementById('ab-add-form').style.display = loggedIn ? 'grid' : 'none';
+  renderAddressBookList();
+}
+
 // --- アドレス帳 ---
 const ADDRESS_BOOK_KEY = 'nesoAddressBook';
 
@@ -418,6 +457,7 @@ function toggleAddressBook() {
 
 function renderAddressBookList() {
   addressBookList.innerHTML = '';
+  const admin = isAdmin();
   ADDRESS_BOOK.forEach((entry, index) => {
     const shortAddress = `${entry.address.substring(0, 6)}...${entry.address.substring(entry.address.length - 4)}`;
     const item = document.createElement('div');
@@ -425,16 +465,19 @@ function renderAddressBookList() {
     item.innerHTML = `
       <span class="ab-name">${entry.name}</span>
       <span class="ab-address">${shortAddress}</span>
-      <button class="ab-delete-btn" data-index="${index}">削除</button>
+      ${admin ? `<button class="ab-delete-btn" data-index="${index}">削除</button>` : ''}
     `;
     addressBookList.appendChild(item);
   });
-  addressBookList.querySelectorAll('.ab-delete-btn').forEach(btn => {
-    btn.addEventListener('click', () => deleteEntry(parseInt(btn.dataset.index)));
-  });
+  if (admin) {
+    addressBookList.querySelectorAll('.ab-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteEntry(parseInt(btn.dataset.index)));
+    });
+  }
 }
 
 function addEntry() {
+  if (!isAdmin()) { alert("管理者でログインしてください。"); return; }
   const name = newEntryName.value.trim();
   const address = newEntryAddress.value.trim();
   if (!name) { alert("名前を入力してください。"); return; }
@@ -448,6 +491,7 @@ function addEntry() {
 }
 
 function deleteEntry(index) {
+  if (!isAdmin()) { alert("管理者でログインしてください。"); return; }
   const entry = ADDRESS_BOOK[index];
   if (!confirm(`「${entry.name}」を削除しますか？`)) return;
   ADDRESS_BOOK.splice(index, 1);
@@ -483,9 +527,14 @@ function refreshSelectsAndCheckboxes() {
 
 toggleAddressBookBtn.onclick = toggleAddressBook;
 addEntryBtn.onclick = addEntry;
+document.getElementById('adminLoginBtn').onclick = adminLogin;
+document.getElementById('adminLogoutBtn').onclick = adminLogout;
+document.getElementById('adminPasswordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') adminLogin();
+});
 
 // ページ読み込み時にアドレス帳をプルダウンに設定
 document.addEventListener('DOMContentLoaded', () => {
   refreshSelectsAndCheckboxes();
-  renderAddressBookList();
+  updateAdminUI();
 });
