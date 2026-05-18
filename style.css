@@ -327,3 +327,54 @@ pre#info {
 
 .log-name { color: #1877f2; font-weight: bold; }
 .log-neso { color: #42b72a; font-weight: bold; }
+
+/* アドレス帳管理 */
+.addressbook-button { background-color: #17a2b8; color: white; }
+.addressbook-button:hover { background-color: #138496; }
+
+#addressBookSection { display: none; }
+
+.ab-list {
+  border: 1px solid #dddfe2;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.ab-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid #f0f2f5;
+  gap: 10px;
+}
+.ab-item:last-child { border-bottom: none; }
+
+.ab-name {
+  font-weight: bold;
+  color: #00529b;
+  min-width: 80px;
+}
+.ab-address {
+  flex: 1;
+  color: #606770;
+  font-size: 12px;
+}
+.ab-delete-btn {
+  background-color: #dc3545;
+  color: white;
+  font-size: 11px;
+  padding: 3px 8px;
+  width: auto;
+  margin: 0;
+  font-weight: normal;
+}
+.ab-delete-btn:hover { background-color: #c82333; }
+
+.ab-add-form {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 8px;
+  align-items: center;
+}

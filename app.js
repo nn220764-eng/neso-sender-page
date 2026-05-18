@@ -29,8 +29,9 @@ const clearListBtn = document.getElementById('clearListBtn');
 const clearLogBtn = document.getElementById('clearLogBtn');
 
 // --- アドレス帳 ---
-// ここに名前とアドレスのリストを追加・編集してください
-const ADDRESS_BOOK = [
+const ADDRESS_BOOK_KEY = 'nesoAddressBook';
+
+const DEFAULT_ADDRESS_BOOK = [
   { name: "とずんぷ", address: "0x78B7e02A145531146Ae6F775AcC268F039c19f34" },
   { name: "げこ", address: "0xf050864d86aBEC249d0608e83c859c05922c9209" },
   { name: "tonga_ri", address: "0xE1Dc7F44706346D870824bB22779797Ff8aAd480" },
@@ -44,6 +45,22 @@ const ADDRESS_BOOK = [
   { name: "トマトインティライミ", address: "0xd40758451314Fc8827a2913Ada2CE5AB3dC34eC0" },
   { name: "k", address: "0xc8803Eab170F507f0172d9A7C5081581C6d7893" }
 ];
+
+function loadAddressBook() {
+  try {
+    const stored = localStorage.getItem(ADDRESS_BOOK_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch (e) { /* ignore */ }
+  // 初回アクセス時はデフォルト値を保存して返す
+  saveAddressBook(DEFAULT_ADDRESS_BOOK);
+  return DEFAULT_ADDRESS_BOOK.slice();
+}
+
+function saveAddressBook(book) {
+  localStorage.setItem(ADDRESS_BOOK_KEY, JSON.stringify(book));
+}
+
+let ADDRESS_BOOK = loadAddressBook();
 
 const HENESYS_RPC_URL = "https://henesys-rpc.msu.io";
 const NESO_CONTRACT_ADDRESS = "0x07E49Ad54FcD23F6e7B911C2068F0148d1827c08";
@@ -378,31 +395,97 @@ if (window.ethereum) {
   });
 }
 
-// ページ読み込み時にアドレス帳をプルダウンに設定
-document.addEventListener('DOMContentLoaded', () => {
-  // プルダウンメニューをクリア
+// アドレス帳管理セクションの表示を切り替える
+const addressBookSection = document.getElementById('addressBookSection');
+const toggleAddressBookBtn = document.getElementById('toggleAddressBookBtn');
+const newEntryName = document.getElementById('newEntryName');
+const newEntryAddress = document.getElementById('newEntryAddress');
+const addEntryBtn = document.getElementById('addEntryBtn');
+const addressBookList = document.getElementById('addressBookList');
+
+function toggleAddressBook() {
+  const isHidden = addressBookSection.style.display === 'none' || addressBookSection.style.display === '';
+  if (isHidden) {
+    addressBookSection.style.display = 'block';
+    addressBookSection.classList.add('section-box');
+    singleAddSection.style.display = 'none';
+    distributeSection.style.display = 'none';
+  } else {
+    addressBookSection.style.display = 'none';
+    addressBookSection.classList.remove('section-box');
+  }
+}
+
+function renderAddressBookList() {
+  addressBookList.innerHTML = '';
+  ADDRESS_BOOK.forEach((entry, index) => {
+    const shortAddress = `${entry.address.substring(0, 6)}...${entry.address.substring(entry.address.length - 4)}`;
+    const item = document.createElement('div');
+    item.className = 'ab-item';
+    item.innerHTML = `
+      <span class="ab-name">${entry.name}</span>
+      <span class="ab-address">${shortAddress}</span>
+      <button class="ab-delete-btn" data-index="${index}">削除</button>
+    `;
+    addressBookList.appendChild(item);
+  });
+  addressBookList.querySelectorAll('.ab-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteEntry(parseInt(btn.dataset.index)));
+  });
+}
+
+function addEntry() {
+  const name = newEntryName.value.trim();
+  const address = newEntryAddress.value.trim();
+  if (!name) { alert("名前を入力してください。"); return; }
+  if (!ethers.isAddress(address)) { alert("有効なウォレットアドレスを入力してください。"); return; }
+  ADDRESS_BOOK.push({ name, address });
+  saveAddressBook(ADDRESS_BOOK);
+  newEntryName.value = '';
+  newEntryAddress.value = '';
+  renderAddressBookList();
+  refreshSelectsAndCheckboxes();
+}
+
+function deleteEntry(index) {
+  const entry = ADDRESS_BOOK[index];
+  if (!confirm(`「${entry.name}」を削除しますか？`)) return;
+  ADDRESS_BOOK.splice(index, 1);
+  saveAddressBook(ADDRESS_BOOK);
+  renderAddressBookList();
+  refreshSelectsAndCheckboxes();
+}
+
+function refreshSelectsAndCheckboxes() {
   singleAddressSelect.innerHTML = '<option value="">宛先を選択...</option>';
   partyMembersSelect.innerHTML = '';
 
   ADDRESS_BOOK.forEach(entry => {
-    const shortAddress = `${entry.address.substring(0, 6)}...${entry.address.substring(entry.address.length - 4)}`;    
+    const shortAddress = `${entry.address.substring(0, 6)}...${entry.address.substring(entry.address.length - 4)}`;
     const option = new Option(`${entry.name} (${shortAddress})`, entry.address);
     singleAddressSelect.add(option.cloneNode(true));
 
-    // PTメンバーリストをチェックボックスで生成
     const memberItem = document.createElement('div');
     memberItem.className = 'member-item';
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = entry.address;
     checkbox.id = `member-${entry.address}`;
-    checkbox.dataset.name = entry.name; // 後で名前を取得するためにデータ属性に保存
+    checkbox.dataset.name = entry.name;
     const label = document.createElement('label');
     label.htmlFor = `member-${entry.address}`;
     label.innerHTML = `<span class="member-name">${entry.name}</span><span class="member-address">${shortAddress}</span>`;
-    
     memberItem.appendChild(checkbox);
     memberItem.appendChild(label);
     partyMembersSelect.appendChild(memberItem);
   });
+}
+
+toggleAddressBookBtn.onclick = toggleAddressBook;
+addEntryBtn.onclick = addEntry;
+
+// ページ読み込み時にアドレス帳をプルダウンに設定
+document.addEventListener('DOMContentLoaded', () => {
+  refreshSelectsAndCheckboxes();
+  renderAddressBookList();
 });
