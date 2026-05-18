@@ -277,6 +277,8 @@ function toggleSingleAdd() {
     singleAddSection.style.display = 'block';
     singleAddSection.classList.add('section-box');
     distributeSection.style.display = 'none';
+    addressBookSection.style.display = 'none';
+    addressBookSection.classList.remove('section-box');
   } else {
     singleAddSection.style.display = 'none';
     singleAddSection.classList.remove('section-box');
@@ -290,6 +292,8 @@ function toggleDistribute() {
     distributeSection.style.display = 'block';
     distributeSection.classList.add('section-box');
     singleAddSection.style.display = 'none';
+    addressBookSection.style.display = 'none';
+    addressBookSection.classList.remove('section-box');
   } else {
     distributeSection.style.display = 'none';
     distributeSection.classList.remove('section-box');
