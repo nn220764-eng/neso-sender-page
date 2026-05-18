@@ -381,20 +381,27 @@ pre#info {
 }
 
 .ab-login-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 8px;
   align-items: center;
   margin-bottom: 10px;
 }
 .ab-login-form .input-field {
-  flex: 1;
   margin: 0;
   height: 36px;
+  min-width: 0;
+}
+.ab-login-form .add-button {
+  width: auto;
+  white-space: nowrap;
 }
 .ab-login-error {
+  grid-column: 1 / -1;
   color: #dc3545;
   font-size: 12px;
   display: none;
+  margin: 0;
 }
 
 .ab-logout-btn {
